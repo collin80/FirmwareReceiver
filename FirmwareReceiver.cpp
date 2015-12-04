@@ -56,7 +56,7 @@ void FirmwareReceiver::gotFrame(CAN_FRAME *frame)
 
 	if (frame->id == (baseAddress + 0x16))
 	{
-		//if (!updatingFirmware) return;
+		if (!updatingFirmware) return;
 		location = frame->data.byte[0] + (256 * frame->data.byte[1]);
 		bufferWritePtr = (location * 4) % IFLASH1_PAGE_SIZE;
 		pageBuffer[bufferWritePtr++] = frame->data.byte[2];
@@ -83,6 +83,7 @@ void FirmwareReceiver::gotFrame(CAN_FRAME *frame)
 
 	if (frame->id == (baseAddress + 0x30))
 	{
+		if (!updatingFirmware) return;
 		if ((frame->data.byte[0] == 0xC0) && (frame->data.byte[1] == 0xDE))
 		{
 			if ((frame->data.byte[2] == 0xFA) && (frame->data.byte[3] == 0xDE))
