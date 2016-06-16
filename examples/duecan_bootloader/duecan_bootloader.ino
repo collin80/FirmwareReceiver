@@ -118,10 +118,10 @@ void loop()
 					Serial.print("Writing flash at ");
 					Serial.println(flashWritePosition);
 					dueFlashStorage.write(flashWritePosition, pageBuffer, IFLASH1_PAGE_SIZE, 0);
-					Serial.println("About to set boot mode");
+					Serial.println("About to set boot mode and reboot");
+					delay(50);
 					//switch boot section								
-					Serial.println("Done sending firmware. You can reboot now.");
-					setupForReboot();
+					setupForReboot(); //this will reboot automatically to FLASH0
 				}
 				break;
 		}
