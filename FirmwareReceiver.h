@@ -1,27 +1,13 @@
 /*
-FirmwareReceiver - The receive side for a canbus connected firmware updater. This side will write new firmware into
-flash memory on this chip. Upon success it will switch which flash bank is used to boot and so the sketch will
-then be running the new version.
-
-Expects that you've already started the canbus and set it up.
+The in-sketch library portion of Firmware Receiver is now very simple. It scans for a sequence that should be globally unique in order to stop the current
+sketch and jump to the bootloader sketch that resides up high in FLASH1. Then that sketch takes over and handles the firmware update. After it is done
+it resets back to FLASH0 so our new sketch can run.
 */
 
 #include <due_can.h>
-#include <DueFlashStorage.h>
 
-class FirmwareReceiver
-{
-public:
-	FirmwareReceiver(CANRaw *bus, uint32_t token, uint32_t base);
-	void gotFrame(CAN_FRAME *frame);	
+#define DEVICETOK	0xCAFEFACE
+#define CANBASE	0x100
 
-private:
-	CANRaw *canbus;
-	DueFlashStorage dueFlashStorage;
-	uint32_t deviceToken; //set a unique value here for each device type
-	uint32_t baseAddress;
-	bool updatingFirmware;
-	int flashSection;
-	uint8_t pageBuffer[IFLASH1_PAGE_SIZE];
-	uint32_t flashWritePosition;
-};
+void fwGotFrame(CAN_FRAME *frame);
+
