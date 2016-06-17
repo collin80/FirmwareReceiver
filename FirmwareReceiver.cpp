@@ -1,5 +1,7 @@
 #include "FirmwareReceiver.h"
 
+//#define SER_DEBUG
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -51,17 +53,26 @@ void fwGotFrame(CAN_FRAME *frame)
 	int location, bufferWritePtr;
 	CAN_FRAME outFrame;
 
+#ifdef SER_DEBUG
 	Serial.print("*");
+#endif
 
 	if (frame->id == CANBASE)
 	{
+#ifdef SER_DEBUG
 		Serial.print("!");
+#endif
 		if (frame->data.low == (uint32_t)0xDEADBEEF)
 		{
+#ifdef SER_DEBUG
+
 			Serial.print("@");
+#endif
 			if (frame->data.high == DEVICETOK)
 			{
+#ifdef SER_DEBUG
 				Serial.println("Starting firmware upload process");
+#endif
 				outFrame.id = CANBASE + 0x10;
 				outFrame.extended = false;
 				outFrame.length = 8;
